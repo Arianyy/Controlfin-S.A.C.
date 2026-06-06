@@ -1,0 +1,53 @@
+pipeline {
+    agent any
+
+    environment {
+        // Usamos 'py' que ya vimos que funciona para ejecutar
+        PYTHON_PATH = 'py'
+        BASE_DIR    = 'C:\\Users\\aryhe\\OneDrive\\Documentos\\Certus\\DATA OPS'
+    }
+
+    stages {
+        stage('0. Instalacion de Dependencias') {
+            steps {
+                echo 'Verificando e instalando librerias necesarias...'
+                // Instalamos pandas, requests y openpyxl (para Excel)
+                bat "${PYTHON_PATH} -m pip install pandas requests openpyxl"
+            }
+        }
+
+        stage('1. Extraccion: API SUNAT') {
+            steps {
+                echo 'Iniciando ejecucion de Descargar_TC.py...'
+                bat "${PYTHON_PATH} \"${BASE_DIR}\\Descargar_TC.py\""
+            }
+        }
+
+        stage('2. Consolidacion: Citibank') {
+            steps {
+                echo 'Iniciando ejecucion de Consolidar_reporte.py...'
+                bat "${PYTHON_PATH} \"${BASE_DIR}\\Consolidar_reporte.py\""
+            }
+        }
+
+        stage('3. Transformacion: Conversion a Soles') {
+            steps {
+                echo 'Iniciando ejecucion de Convertir_a_Soles.py...'
+                bat "${PYTHON_PATH} \"${BASE_DIR}\\Convertir_a_Soles.py\""
+            }
+        }
+    }
+
+    post {
+        success {
+            echo '========================================================'
+            echo 'PROCESO FINALIZADO: El reporte de ControlFin esta listo.'
+            echo '========================================================'
+        }
+        failure {
+            echo '========================================================'
+            echo 'ERROR: Faltan librerias o hay un error en los scripts.'
+            echo '========================================================'
+        }
+    }
+}
