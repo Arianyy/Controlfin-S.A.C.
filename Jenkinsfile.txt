@@ -1,4 +1,5 @@
 // Versión 1.1 - Modificación de hora del reporte de la tarde
+// Versión 1.2 - Actualización: Ajuste de configuración del agente
 pipeline {
     agent any
 
